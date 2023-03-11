@@ -2,10 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class Storage(ABC):
-    def __init__(self, capacity=None):
-        self._items = {}
-        self._capacity = capacity
-
     @abstractmethod
     def add(self, title, amount):
         pass

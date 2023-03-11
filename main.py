@@ -35,7 +35,7 @@ def main():
         print('В магазин недостаточно места, попробуйте что то другое')
         return None
 
-    if store.items[request.product] > request.amount:
+    if store.items[request.product] >= request.amount:
         print('Нужное количество есть на складе')
         store.remove(request.product, request.amount)
         print(f'Курьер забрал {request.amount} {request.product} со склада')
