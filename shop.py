@@ -1,5 +1,5 @@
 from base_class import BaseClass
-from exceptions import  NotFreeSpace
+from exceptions import NotFreeSpace
 
 
 class Shop(BaseClass):

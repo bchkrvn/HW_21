@@ -7,7 +7,7 @@ class ItemNotFound(Exception):
 
     def __str__(self):
         if self.message:
-            return f'ItemNotFound: {self.message}'
+            return f'{self.message}'
         else:
             return f'ItemNotFound'
 
@@ -21,7 +21,7 @@ class NotFreeSpace(Exception):
 
     def __str__(self):
         if self.message:
-            return f'NotFreeSpace: {self.message}'
+            return f'{self.message}'
         else:
             return f'NotFreeSpace'
 
@@ -35,6 +35,6 @@ class NotEnoughItem(Exception):
 
     def __str__(self):
         if self.message:
-            return f'NotFreeSpace: {self.message}'
+            return f'{self.message}'
         else:
             return f'NotFreeSpace'

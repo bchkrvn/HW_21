@@ -25,9 +25,12 @@ class BaseClass(Storage):
         amount_in_store = self.items[title]
 
         if amount_in_store < amount:
-            raise NotEnoughItem(f'Товара недостаточно')
+            raise NotEnoughItem(f'Товара меньше ({amount_in_store}) чем нужно ({amount})')
 
         self.items[title] -= amount
+
+        if self.items[title] == 0:
+            del self.items[title]
 
     def get_free_space(self):
         occupied_space = sum(self.items.values())

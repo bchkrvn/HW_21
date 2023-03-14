@@ -1,3 +1,4 @@
+from exceptions import ItemNotFound, NotEnoughItem, NotFreeSpace
 from request import Request
 from shop import Shop
 from store import Store
@@ -15,45 +16,62 @@ store.add('носки', 3)
 store.add('шапки', 5)
 store.add('хлеб', 10)
 
-
-def main():
-    user_input = input('Ваш запрос: ')
-
-    for i, word in enumerate(user_input.split()):
-        if word.isdigit():
-            amount = int(word)
-            product = user_input.split()[i + 1]
-            break
-
-    request = Request('склад', 'магазин', amount, product)
-
-    if not store.is_item(request.product):
-        print(f'Товар "{request.product}" не найден')
-        return None
-
-    if shop.get_free_space() < request.amount or shop.get_unique_items_count() > 4:
-        print('В магазин недостаточно места, попробуйте что то другое')
-        return None
-
-    if store.items[request.product] >= request.amount:
-        print('Нужное количество есть на складе')
-        store.remove(request.product, request.amount)
-        print(f'Курьер забрал {request.amount} {request.product} со склада')
-        print(f'Курьер везет {request.amount} {request.product} со склада в магазин')
-        shop.add(request.product, request.amount)
-        print(f'Курьер везет {request.amount} {request.product} со склада в магазин\n')
-
-        print('На складе хранится:')
-        for item, amount in store.items.items():
-            print(f'{amount} {item}')
-
-        print('\nВ магазине хранится:')
-        for item, amount in shop.items.items():
-            print(f'{amount} {item}')
-
-    else:
-        print('Не хватает на складе, попробуйте заказать меньше')
+places = {
+    'магазин': shop,
+    'магазина': shop,
+    'склад': store,
+    'склада': store,
+}
 
 
-while True:
-    main()
+def main(shop, store, places):
+    while True:
+        print('\nНапишете запрос в формате: "Доставить <кол-во> <товар> из <место> в <место>"')
+        user_input = input('Ваш запрос: ')
+        request = Request(user_input)
+
+        try:
+            place_from = places[request.place_from]
+            place_to = places[request.place_to]
+
+        except KeyError:
+            print('Доставить и отправить товар можно из магазина или склада')
+            continue
+
+        try:
+            place_from.remove(request.product, request.amount)
+
+        except ItemNotFound as e:
+            print(e)
+            continue
+        except NotEnoughItem as e:
+            print(e)
+            continue
+
+        try:
+            place_to.add(request.product, request.amount)
+
+        except NotFreeSpace as e:
+            print(e)
+            place_from.add(request.product, request.amount)
+            continue
+
+        print_info(request, shop, store)
+
+
+def print_info(request, shop, store):
+    print('\nНужное количество есть на складе')
+    print(f'Курьер забрал {request.amount} {request.product} из {request.place_from}')
+    print(f'Курьер везет {request.amount} {request.product} из {request.place_from} в {request.place_to}')
+    print(f'Курьер привез {request.amount} {request.product} из {request.place_from} в {request.place_to}')
+
+    print('На складе хранится:')
+    for item, amount in store.items.items():
+        print(f'{amount} {item}')
+
+    print('\nВ магазине хранится:')
+    for item, amount in shop.items.items():
+        print(f'{amount} {item}')
+
+
+main(shop, store, places)
